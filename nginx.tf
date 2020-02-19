@@ -262,6 +262,12 @@ resource "kubernetes_deployment" "nginx" {
             "--enable-ssl-chain-completion=true"
           ]
 
+          volume_mount {
+            mount_path = "/var/run/secrets/kubernetes.io/serviceaccount"
+            name       = kubernetes_service_account.nginx.default_secret_name
+            read_only  = true
+          }
+
           security_context {
             allow_privilege_escalation = true
             run_as_user                = 101
@@ -334,6 +340,14 @@ resource "kubernetes_deployment" "nginx" {
                 command = ["/wait-shutdown"]
               }
             }
+          }
+        }
+
+        volume {
+          name = kubernetes_service_account.nginx.default_secret_name
+
+          secret {
+            secret_name = kubernetes_service_account.nginx.default_secret_name
           }
         }
       }
