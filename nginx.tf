@@ -20,15 +20,15 @@ resource "kubernetes_config_map" "nginx_config" {
     name      = "nginx-configuration"
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
-    data = {
-      "ssl-protocols" = "TLSv1 TLSv1.1 TLSv1.2"
-    }
-
     labels = {
       "app.kubernetes.io/name"       = local.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
+  }
+
+  data = {
+    "ssl-protocols" = "TLSv1 TLSv1.1 TLSv1.2"
   }
 }
 
