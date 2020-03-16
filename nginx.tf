@@ -242,8 +242,9 @@ resource "kubernetes_deployment" "nginx" {
           "prometheus.io/port"                         = "10254"
           "prometheus.io/scrape"                       = "true"
           "nginx.ingress.kubernetes.io/server-snippet" = <<EOF
-					grpc_read_timeout 3600s;
-					EOF
+|
+grpc_read_timeout 3600s;
+EOF
         }
       }
 
