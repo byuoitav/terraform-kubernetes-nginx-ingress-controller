@@ -234,8 +234,11 @@ resource "kubernetes_deployment" "nginx" {
         }
 
         annotations = {
-          "prometheus.io/port" : "10254"
-          "prometheus.io/scrape" : "true"
+          "prometheus.io/port"                         = "10254"
+          "prometheus.io/scrape"                       = "true"
+          "nginx.ingress.kubernetes.io/server-snippet" = <<EOF
+					grpc_read_timeout 3600s;
+					EOF
         }
       }
 
