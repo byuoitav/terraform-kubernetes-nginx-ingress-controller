@@ -10,9 +10,7 @@ resource "kubernetes_service" "lb" {
       "app.kubernetes.io/managed-by" = "terraform"
     }
 
-    annotations = {
-      "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
-    }
+    annotations = var.lb_annotations
   }
 
   spec {
