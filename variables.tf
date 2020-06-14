@@ -16,3 +16,15 @@ variable "lb_annotations" {
     "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
   }
 }
+
+variable "lb_ports" {
+  default     = [{
+    name        = "http"
+    port        = 80
+    target_port = "http"
+  }, {
+    name        = "https"
+    port        = 443
+    target_port = "https"
+  }]
+}
