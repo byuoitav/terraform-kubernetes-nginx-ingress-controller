@@ -1,15 +1,11 @@
 // https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.29.0/deploy/static/mandatory.yaml
-locals {
-  name = "ingress-nginx"
-}
-
 resource "kubernetes_namespace" "nginx" {
   metadata {
-    name = local.name
+    name = var.name
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
-      "app.kubernetes.io/part-of"    = local.name
+      "app.kubernetes.io/name"       = var.name
+      "app.kubernetes.io/part-of"    = var.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
   }
@@ -21,7 +17,7 @@ resource "kubernetes_config_map" "nginx_config" {
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
+      "app.kubernetes.io/name"       = var.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
@@ -36,7 +32,7 @@ resource "kubernetes_config_map" "nginx_tcp" {
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
+      "app.kubernetes.io/name"       = var.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
@@ -49,7 +45,7 @@ resource "kubernetes_config_map" "nginx_udp" {
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
+      "app.kubernetes.io/name"       = var.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
@@ -62,7 +58,7 @@ resource "kubernetes_service_account" "nginx" {
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
+      "app.kubernetes.io/name"       = var.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
@@ -71,10 +67,10 @@ resource "kubernetes_service_account" "nginx" {
 
 resource "kubernetes_cluster_role" "nginx" {
   metadata {
-    name = "nginx-ingress-clusterrole"
+    name = "${var.name}-clusterrole"
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
+      "app.kubernetes.io/name"       = var.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
@@ -123,7 +119,7 @@ resource "kubernetes_role" "nginx" {
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
+      "app.kubernetes.io/name"       = var.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
@@ -138,7 +134,7 @@ resource "kubernetes_role" "nginx" {
   rule {
     api_groups     = [""]
     resources      = ["configmaps"]
-    resource_names = ["ingress-controller-leader-nginx"]
+    resource_names = ["${var.name}-leader-${var.name}"]
     verbs          = ["get", "update"]
   }
 
@@ -161,7 +157,7 @@ resource "kubernetes_role_binding" "nginx" {
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
+      "app.kubernetes.io/name"       = var.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
@@ -182,10 +178,10 @@ resource "kubernetes_role_binding" "nginx" {
 
 resource "kubernetes_cluster_role_binding" "nginx" {
   metadata {
-    name = "nginx-ingress-clusterrole-nisa-binding"
+    name = "${var.name}-clusterrole-nisa-binding"
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
+      "app.kubernetes.io/name"       = var.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
@@ -210,7 +206,7 @@ resource "kubernetes_deployment" "nginx" {
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
+      "app.kubernetes.io/name"       = var.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/version"    = "v${var.nginx_ingress_controller_version}"
       "app.kubernetes.io/managed-by" = "terraform"
@@ -222,7 +218,7 @@ resource "kubernetes_deployment" "nginx" {
 
     selector {
       match_labels = {
-        "app.kubernetes.io/name"    = local.name
+        "app.kubernetes.io/name"    = var.name
         "app.kubernetes.io/part-of" = kubernetes_namespace.nginx.metadata.0.name
       }
     }
@@ -230,7 +226,7 @@ resource "kubernetes_deployment" "nginx" {
     template {
       metadata {
         labels = {
-          "app.kubernetes.io/name"    = local.name
+          "app.kubernetes.io/name"    = var.name
           "app.kubernetes.io/part-of" = kubernetes_namespace.nginx.metadata.0.name
           "app.kubernetes.io/version" = "v${var.nginx_ingress_controller_version}"
         }
@@ -261,9 +257,11 @@ resource "kubernetes_deployment" "nginx" {
             "--configmap=$(POD_NAMESPACE)/nginx-configuration",
             "--tcp-services-configmap=$(POD_NAMESPACE)/tcp-services",
             "--udp-services-configmap=$(POD_NAMESPACE)/udp-services",
-            "--publish-service=$(POD_NAMESPACE)/ingress-nginx",
+            "--publish-service=$(POD_NAMESPACE)/${var.name}",
             "--annotations-prefix=nginx.ingress.kubernetes.io",
-            "--enable-ssl-chain-completion=true"
+            "--enable-ssl-chain-completion=true",
+            "--election-id=${var.name}-leader",
+            "--ingress-class=${var.name}",
           ]
 
           volume_mount {
@@ -361,11 +359,11 @@ resource "kubernetes_deployment" "nginx" {
 
 resource "kubernetes_limit_range" "nginx" {
   metadata {
-    name      = local.name
+    name      = var.name
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
+      "app.kubernetes.io/name"       = var.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
@@ -385,14 +383,14 @@ resource "kubernetes_limit_range" "nginx" {
 resource "kubernetes_pod_disruption_budget" "nginx" {
   count = var.controller_replicas > 1 ? 1 : 0
   metadata {
-    name      = local.name
+    name      = var.name
     namespace = kubernetes_namespace.nginx.metadata.0.name
   }
   spec {
     max_unavailable = var.disruption_budget_max_unavailable
     selector {
       match_labels = {
-        "app.kubernetes.io/name" = local.name
+        "app.kubernetes.io/name" = var.name
       }
     }
   }

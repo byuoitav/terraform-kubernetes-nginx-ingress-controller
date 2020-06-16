@@ -8,6 +8,7 @@ module nginx-ingress-controller {
   version = "0.1.12",
 
   # optional
+  name = "ingress-nginx"
   nginx_config {
     "ssl-protocols"     = "TLSv1.2" # Only Support TLSv1.2
 	"proxy-buffer-size" = "16k"
