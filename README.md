@@ -12,5 +12,6 @@ module nginx-ingress-controller {
     "ssl-protocols"     = "TLSv1.2" # Only Support TLSv1.2
 	"proxy-buffer-size" = "16k"
   }
+  load_balancer_source_ranges = ["1.2.3.4/32"]
 }
 ```

@@ -17,6 +17,12 @@ variable "lb_annotations" {
   }
 }
 
+variable "load_balancer_source_ranges" {
+  description = "The ip whitelist that is allowed to access the load balancer"
+  default     = ["0.0.0.0/0"]
+  type        = list(string)
+}
+
 variable "lb_ports" {
   description = "Load balancer port configuration"
   type = list(object({
