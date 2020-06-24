@@ -361,6 +361,7 @@ resource "kubernetes_deployment" "nginx" {
 resource "kubernetes_limit_range" "nginx" {
   metadata {
     name = local.name
+    namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
       "app.kubernetes.io/name"       = local.name
