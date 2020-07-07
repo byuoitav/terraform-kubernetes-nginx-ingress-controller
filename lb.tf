@@ -23,7 +23,7 @@ resource "kubernetes_service" "lb" {
     external_traffic_policy = "Local"
 
     dynamic "port" {
-      for_each = [for port in var.lb_ports: port]
+      for_each = var.lb_ports
 
       content {
         name        = port.value.name
