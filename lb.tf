@@ -10,9 +10,7 @@ resource "kubernetes_service" "lb" {
       "app.kubernetes.io/managed-by" = "terraform"
     }
 
-    annotations = {
-      "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
-    }
+    annotations = var.lb_annotations
   }
 
   spec {
@@ -24,16 +22,14 @@ resource "kubernetes_service" "lb" {
 
     external_traffic_policy = "Local"
 
-    port {
-      name        = "http"
-      port        = 80
-      target_port = "http"
-    }
+    dynamic "port" {
+      for_each = [for port in var.lb_ports: port]
 
-    port {
-      name        = "https"
-      port        = 443
-      target_port = "https"
+      content {
+        name        = port.value.name
+        port        = port.value.port
+        target_port = port.value.target_port
+      }
     }
   }
 }
