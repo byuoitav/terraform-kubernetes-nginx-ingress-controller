@@ -380,3 +380,19 @@ resource "kubernetes_limit_range" "nginx" {
     }
   }
 }
+
+resource "kubernetes_pod_disruption_budget" "nginx" {
+  count = var.controller_replicas > 1 ? 1 : 0
+  metadata {
+    name      = local.name
+    namespace = kubernetes_namespace.nginx.metadata.0.name
+  }
+  spec {
+    max_unavailable = var.disruption_budget_max_unavailable
+    selector {
+      match_labels = {
+        "app.kubernetes.io/name" = local.name
+      }
+    }
+  }
+}

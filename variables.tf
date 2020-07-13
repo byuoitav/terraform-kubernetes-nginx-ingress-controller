@@ -46,3 +46,9 @@ variable "controller_replicas" {
   type        = number
   default     = 1
 }
+
+variable "disruption_budget_max_unavailable" {
+  description = "The maximum unavailability of the nginx deployment"
+  type = string
+  default = "50%"
+}
