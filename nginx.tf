@@ -246,6 +246,7 @@ resource "kubernetes_deployment" "nginx" {
         // wait up to 5 minutes to drain connections
         termination_grace_period_seconds = 300
         service_account_name             = kubernetes_service_account.nginx.metadata.0.name
+        priority_class_name              = var.priority_class_name
 
         node_selector = {
           "kubernetes.io/os" = "linux"
