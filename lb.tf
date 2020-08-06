@@ -31,5 +31,6 @@ resource "kubernetes_service" "lb" {
         target_port = port.value.target_port
       }
     }
+    load_balancer_source_ranges = var.load_balancer_source_ranges
   }
 }

@@ -17,6 +17,12 @@ variable "lb_annotations" {
   }
 }
 
+variable "load_balancer_source_ranges" {
+  description = "The ip whitelist that is allowed to access the load balancer"
+  default     = ["0.0.0.0/0"]
+  type        = list(string)
+}
+
 variable "lb_ports" {
   description = "Load balancer port configuration"
   type = list(object({
@@ -35,8 +41,20 @@ variable "lb_ports" {
   }]
 }
 
+variable "priority_class_name" {
+  description = "The priority class to attach to the deployment"
+  type        = string
+  default     = null
+}
+
 variable "controller_replicas" {
   description = "Desired number of replicas of the nginx ingress controller pod"
   type        = number
   default     = 1
+}
+
+variable "disruption_budget_max_unavailable" {
+  description = "The maximum unavailability of the nginx deployment"
+  type = string
+  default = "50%"
 }

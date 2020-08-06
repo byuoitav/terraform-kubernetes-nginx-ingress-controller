@@ -246,6 +246,7 @@ resource "kubernetes_deployment" "nginx" {
         // wait up to 5 minutes to drain connections
         termination_grace_period_seconds = 300
         service_account_name             = kubernetes_service_account.nginx.metadata.0.name
+        priority_class_name              = var.priority_class_name
 
         node_selector = {
           "kubernetes.io/os" = "linux"
@@ -376,6 +377,22 @@ resource "kubernetes_limit_range" "nginx" {
       min = {
         "memory" = "90Mi"
         "cpu"    = "100m"
+      }
+    }
+  }
+}
+
+resource "kubernetes_pod_disruption_budget" "nginx" {
+  count = var.controller_replicas > 1 ? 1 : 0
+  metadata {
+    name      = local.name
+    namespace = kubernetes_namespace.nginx.metadata.0.name
+  }
+  spec {
+    max_unavailable = var.disruption_budget_max_unavailable
+    selector {
+      match_labels = {
+        "app.kubernetes.io/name" = local.name
       }
     }
   }
