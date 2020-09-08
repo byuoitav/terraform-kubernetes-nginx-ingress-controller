@@ -1,11 +1,11 @@
 // https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.29.0/deploy/static/provider/aws/service-nlb.yaml
 resource "kubernetes_service" "lb" {
   metadata {
-    name      = local.name
+    name      = var.name
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
-      "app.kubernetes.io/name"       = local.name
+      "app.kubernetes.io/name"       = var.name
       "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
       "app.kubernetes.io/managed-by" = "terraform"
     }
@@ -16,7 +16,7 @@ resource "kubernetes_service" "lb" {
   spec {
     type = "LoadBalancer"
     selector = {
-      "app.kubernetes.io/name"    = local.name
+      "app.kubernetes.io/name"    = var.name
       "app.kubernetes.io/part-of" = kubernetes_namespace.nginx.metadata.0.name
     }
 

@@ -1,3 +1,9 @@
+variable "name" {
+  description = "The name of this nginx ingress controller"
+  type        = string
+  default     = "ingress-nginx"
+}
+
 variable "nginx_ingress_controller_version" {
   description = "The version of Nginx Ingress Controller to use. See https://github.com/kubernetes/ingress-nginx/releases for available versions"
   type        = string
