@@ -13,7 +13,7 @@ resource "kubernetes_namespace" "nginx" {
 
 resource "kubernetes_config_map" "nginx_config" {
   metadata {
-    name      = "nginx-configuration"
+    name      = "${var.name}-config-map"
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
@@ -28,7 +28,7 @@ resource "kubernetes_config_map" "nginx_config" {
 
 resource "kubernetes_config_map" "nginx_tcp" {
   metadata {
-    name      = "tcp-services"
+    name      = "${var.name}-tcp-services"
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
@@ -41,7 +41,7 @@ resource "kubernetes_config_map" "nginx_tcp" {
 
 resource "kubernetes_config_map" "nginx_udp" {
   metadata {
-    name      = "udp-services"
+    name      = "${var.name}-udp-services"
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
@@ -54,7 +54,7 @@ resource "kubernetes_config_map" "nginx_udp" {
 
 resource "kubernetes_service_account" "nginx" {
   metadata {
-    name      = "nginx-ingress-serviceaccount"
+    name      = "${var.name}-serviceaccount"
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
@@ -115,7 +115,7 @@ resource "kubernetes_cluster_role" "nginx" {
 
 resource "kubernetes_role" "nginx" {
   metadata {
-    name      = "nginx-ingress-role"
+    name      = "${var.name}-role"
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
@@ -134,7 +134,7 @@ resource "kubernetes_role" "nginx" {
   rule {
     api_groups     = [""]
     resources      = ["configmaps"]
-    resource_names = ["${var.name}-leader-${var.name}"]
+    resource_names = ["${var.name}-leader"]
     verbs          = ["get", "update"]
   }
 
@@ -153,7 +153,7 @@ resource "kubernetes_role" "nginx" {
 
 resource "kubernetes_role_binding" "nginx" {
   metadata {
-    name      = "nginx-ingress-role-nisa-binding"
+    name      = "${var.name}-role-binding"
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
@@ -178,7 +178,7 @@ resource "kubernetes_role_binding" "nginx" {
 
 resource "kubernetes_cluster_role_binding" "nginx" {
   metadata {
-    name = "${var.name}-clusterrole-nisa-binding"
+    name = "${var.name}-clusterrole-binding"
 
     labels = {
       "app.kubernetes.io/name"       = var.name
@@ -202,7 +202,7 @@ resource "kubernetes_cluster_role_binding" "nginx" {
 
 resource "kubernetes_deployment" "nginx" {
   metadata {
-    name      = "nginx-ingress-controller"
+    name      = "${var.name}-deployment"
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
@@ -232,8 +232,9 @@ resource "kubernetes_deployment" "nginx" {
         }
 
         annotations = {
-          "prometheus.io/port"                         = "10254"
-          "prometheus.io/scrape"                       = "true"
+          "prometheus.io/port"   = "10254"
+          "prometheus.io/scrape" = "true"
+          // TODO make these configurable
           "nginx.ingress.kubernetes.io/server-snippet" = "grpc_read_timeout 3600s;"
         }
       }
@@ -254,9 +255,9 @@ resource "kubernetes_deployment" "nginx" {
 
           args = [
             "/nginx-ingress-controller",
-            "--configmap=$(POD_NAMESPACE)/nginx-configuration",
-            "--tcp-services-configmap=$(POD_NAMESPACE)/tcp-services",
-            "--udp-services-configmap=$(POD_NAMESPACE)/udp-services",
+            "--configmap=$(POD_NAMESPACE)/${kubernetes_config_map.nginx_config.metadata.0.name}",
+            "--tcp-services-configmap=$(POD_NAMESPACE)/${kubernetes_config_map.nginx_tcp.metadata.0.name}",
+            "--udp-services-configmap=$(POD_NAMESPACE)/${kubernetes_config_map.nginx_udp.metadata.0.name}",
             "--publish-service=$(POD_NAMESPACE)/${var.name}",
             "--annotations-prefix=nginx.ingress.kubernetes.io",
             "--enable-ssl-chain-completion=true",
