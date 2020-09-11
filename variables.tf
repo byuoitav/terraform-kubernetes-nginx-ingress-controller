@@ -9,8 +9,8 @@ variable "nginx_ingress_controller_image" {
   default     = "k8s.gcr.io/ingress-nginx/controller"
 }
 
-variable "nginx_ingress_controller_version" {
-  description = "The version of Nginx Ingress Controller to use. See https://github.com/kubernetes/ingress-nginx/releases for available versions"
+variable "nginx_ingress_controller_image_tag" {
+  description = "The image tag to use for the NGINX ingress controller. See https://github.com/kubernetes/ingress-nginx/releases for available versions"
   type        = string
   default     = "v0.35.0@sha256:fc4979d8b8443a831c9789b5155cded454cb7de737a8b727bc2ba0106d2eae8b"
 }
