@@ -1,4 +1,3 @@
-// https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.29.0/deploy/static/mandatory.yaml
 resource "kubernetes_namespace" "nginx" {
   metadata {
     name = var.name
@@ -141,7 +140,7 @@ resource "kubernetes_role" "nginx" {
   rule {
     api_groups = [""]
     resources  = ["configmaps"]
-    verbs      = ["create", "update"]
+    verbs      = ["get", "create", "update"]
   }
 
   rule {
@@ -261,8 +260,7 @@ resource "kubernetes_deployment" "nginx" {
             "--publish-service=$(POD_NAMESPACE)/${var.name}",
             "--annotations-prefix=nginx.ingress.kubernetes.io",
             "--enable-ssl-chain-completion=true",
-            "--election-id=${var.name}-leader",
-            "--ingress-class=${var.name}",
+            "--election-id=${var.name}-leader"
           ]
 
           volume_mount {
