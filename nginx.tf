@@ -141,7 +141,7 @@ resource "kubernetes_role" "nginx" {
   rule {
     api_groups = [""]
     resources  = ["configmaps"]
-    verbs      = ["create"]
+    verbs      = ["create", "update"]
   }
 
   rule {
