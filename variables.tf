@@ -7,7 +7,7 @@ variable "name" {
 variable "nginx_ingress_controller_version" {
   description = "The version of Nginx Ingress Controller to use. See https://github.com/kubernetes/ingress-nginx/releases for available versions"
   type        = string
-  default     = "0.29.0"
+  default     = "0.44.0"
 }
 
 variable "nginx_config" {

@@ -33,4 +33,6 @@ resource "kubernetes_service" "lb" {
     }
     load_balancer_source_ranges = var.load_balancer_source_ranges
   }
+
+  wait_for_load_balancer = false
 }
