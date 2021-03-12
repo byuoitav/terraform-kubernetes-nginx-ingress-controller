@@ -206,9 +206,10 @@ resource "kubernetes_deployment" "nginx" {
     namespace = kubernetes_namespace.nginx.metadata.0.name
 
     labels = {
-      "app.kubernetes.io/name"       = var.name
-      "app.kubernetes.io/part-of"    = kubernetes_namespace.nginx.metadata.0.name
-      "app.kubernetes.io/version"    = "v${var.nginx_ingress_controller_version}"
+      "app.kubernetes.io/name"    = var.name
+      "app.kubernetes.io/part-of" = kubernetes_namespace.nginx.metadata.0.name
+      // Get rid of sha digest if exists in the tag
+      "app.kubernetes.io/version"    = "${element(split("@", var.nginx_ingress_controller_image_tag), 0)}"
       "app.kubernetes.io/managed-by" = "terraform"
     }
   }
@@ -228,7 +229,8 @@ resource "kubernetes_deployment" "nginx" {
         labels = {
           "app.kubernetes.io/name"    = var.name
           "app.kubernetes.io/part-of" = kubernetes_namespace.nginx.metadata.0.name
-          "app.kubernetes.io/version" = "v${var.nginx_ingress_controller_version}"
+          // Get rid of sha digest if exists in the tag
+          "app.kubernetes.io/version" = "${element(split("@", var.nginx_ingress_controller_image_tag), 0)}"
         }
 
         annotations = {
@@ -251,7 +253,7 @@ resource "kubernetes_deployment" "nginx" {
 
         container {
           name  = "nginx-ingress-controller"
-          image = "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:${var.nginx_ingress_controller_version}"
+          image = "${var.nginx_ingress_controller_image}:${var.nginx_ingress_controller_image_tag}"
 
           args = [
             "/nginx-ingress-controller",

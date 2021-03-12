@@ -3,11 +3,16 @@ variable "name" {
   type        = string
   default     = "ingress-nginx"
 }
-
-variable "nginx_ingress_controller_version" {
-  description = "The version of Nginx Ingress Controller to use. See https://github.com/kubernetes/ingress-nginx/releases for available versions"
+variable "nginx_ingress_controller_image" {
+  description = "The image to use for the NGINX ingress controller. See https://github.com/kubernetes/ingress-nginx/releases for available versions"
   type        = string
-  default     = "0.29.0"
+  default     = "k8s.gcr.io/ingress-nginx/controller"
+}
+
+variable "nginx_ingress_controller_image_tag" {
+  description = "The image tag to use for the NGINX ingress controller. See https://github.com/kubernetes/ingress-nginx/releases for available versions"
+  type        = string
+  default     = "v0.44.0@sha256:3dd0fac48073beaca2d67a78c746c7593f9c575168a17139a9955a82c63c4b9a"
 }
 
 variable "nginx_config" {
@@ -61,6 +66,6 @@ variable "controller_replicas" {
 
 variable "disruption_budget_max_unavailable" {
   description = "The maximum unavailability of the nginx deployment"
-  type = string
-  default = "50%"
+  type        = string
+  default     = "50%"
 }
