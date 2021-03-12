@@ -5,7 +5,7 @@
 ```
 module nginx-ingress-controller {
   source  = "byuoitav/nginx-ingress-controller/kubernetes"
-  version = "0.1.12",
+  version = "0.2.0",
 
   # optional
   name = "ingress-nginx"
