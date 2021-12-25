@@ -97,7 +97,7 @@ resource "kubernetes_cluster_role" "nginx" {
   rule {
     api_groups = [""]
     resources  = ["events"]
-    verbs      = ["update", "create", "patch"]
+    verbs      = ["create", "patch"]
   }
 
   rule {
@@ -141,7 +141,7 @@ resource "kubernetes_role" "nginx" {
   rule {
     api_groups = [""]
     resources  = ["configmaps"]
-    verbs      = ["create"]
+    verbs      = ["update", "create"]
   }
 
   rule {
