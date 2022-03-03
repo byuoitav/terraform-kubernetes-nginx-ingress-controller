@@ -348,6 +348,9 @@ resource "kubernetes_deployment" "nginx" {
           }
         }
 
+        image_pull_secrets = var.nginx_ingress_controller_image_pull_secrets
+
+
         volume {
           name = kubernetes_service_account.nginx.default_secret_name
 

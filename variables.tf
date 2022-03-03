@@ -15,6 +15,11 @@ variable "nginx_ingress_controller_image_tag" {
   default     = "v0.44.0@sha256:3dd0fac48073beaca2d67a78c746c7593f9c575168a17139a9955a82c63c4b9a"
 }
 
+variable "nginx_ingress_controller_image_pull_secrets" {
+  description = "The image pull secret needed for pull the secret"
+  default     = null
+}
+
 variable "nginx_config" {
   description = "Data in the k8s config map. See https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap for options"
   default     = {}
