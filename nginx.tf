@@ -348,7 +348,9 @@ resource "kubernetes_deployment" "nginx" {
           }
         }
 
-        image_pull_secrets = var.nginx_ingress_controller_image_pull_secrets
+        image_pull_secrets {
+          name = var.nginx_ingress_controller_image_pull_secrets
+        }
 
 
         volume {

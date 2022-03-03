@@ -17,7 +17,8 @@ variable "nginx_ingress_controller_image_tag" {
 
 variable "nginx_ingress_controller_image_pull_secrets" {
   description = "The image pull secret needed for pull the secret"
-  default     = null
+  type        = string
+  default     = ""
 }
 
 variable "nginx_config" {
