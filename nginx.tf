@@ -102,7 +102,7 @@ resource "kubernetes_cluster_role" "nginx" {
 
   rule {
     api_groups = ["extensions", "networking.k8s.io"]
-    resources  = ["ingresses"]
+    resources  = ["ingresses", "ingressclasses"]
     verbs      = ["get", "list", "watch"]
   }
 
