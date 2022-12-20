@@ -110,6 +110,18 @@ resource "kubernetes_cluster_role" "nginx" {
     resources  = ["ingresses/status"]
     verbs      = ["update"]
   }
+
+  rule {
+    api_groups = ["coordination.k8s.io"]
+    resources  = ["leases"]
+    verbs      = ["create", "update", "get", "list", "watch"]
+  }
+
+  rule {
+    api_groups = ["discovery.k8s.io"]
+    resources  = ["endpointslices"]
+    verbs      = ["create", "update", "get", "list", "watch"]
+  }
 }
 
 resource "kubernetes_role" "nginx" {
