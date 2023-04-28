@@ -99,11 +99,29 @@ resource "kubernetes_cluster_role" "nginx" {
     resources  = ["events"]
     verbs      = ["create", "patch"]
   }
+  
+  rule {
+    api_groups = ["discovery.k8s.io"]
+    resources  = ["endpointslices"]
+    verbs      = ["list","watch"]
+  }
+
+  rule {
+    api_groups = ["coordination.k8s.io"]
+    resources  = ["leases"]
+    verbs      = ["create", "update", "get", "list", "watch"]
+  }
+  
+  rule {
+    api_groups = ["networking.k8s.io"]
+    resources  = ["ingressclasses"]
+    verbs      = ["create", "update", "get", "list", "watch"]
+  }
 
   rule {
     api_groups = ["extensions", "networking.k8s.io"]
     resources  = ["ingresses"]
-    verbs      = ["get", "list", "watch"]
+    verbs      = ["create", "delete", "get", "list", "patch", "update", "watch"]
   }
 
   rule {
@@ -200,6 +218,18 @@ resource "kubernetes_cluster_role_binding" "nginx" {
   }
 }
 
+resource "kubernetes_secret_v1" "nginx" {
+  metadata {
+    name        = "${var.name}-service-account-token"
+    namespace   = kubernetes_service_account.nginx.metadata.0.namespace
+    annotations = {
+      "kubernetes.io/service-account.name" = kubernetes_service_account.nginx.metadata.0.name
+    }
+  }
+
+  type = "kubernetes.io/service-account-token"
+}
+
 resource "kubernetes_deployment" "nginx" {
   metadata {
     name      = "${var.name}-deployment"
@@ -263,13 +293,14 @@ resource "kubernetes_deployment" "nginx" {
             "--publish-service=$(POD_NAMESPACE)/${var.name}",
             "--annotations-prefix=nginx.ingress.kubernetes.io",
             "--enable-ssl-chain-completion=true",
+            "--enable-ssl-passthrough=true",
             "--election-id=${var.name}-leader",
             "--ingress-class=${var.name}",
           ]
 
           volume_mount {
             mount_path = "/var/run/secrets/kubernetes.io/serviceaccount"
-            name       = kubernetes_service_account.nginx.default_secret_name
+            name       = kubernetes_secret_v1.nginx.metadata.0.name
             read_only  = true
           }
 
@@ -349,10 +380,10 @@ resource "kubernetes_deployment" "nginx" {
         }
 
         volume {
-          name = kubernetes_service_account.nginx.default_secret_name
+          name = kubernetes_secret_v1.nginx.metadata.0.name
 
           secret {
-            secret_name = kubernetes_service_account.nginx.default_secret_name
+            secret_name = kubernetes_secret_v1.nginx.metadata.0.name
           }
         }
       }
@@ -382,7 +413,7 @@ resource "kubernetes_limit_range" "nginx" {
     }
   }
 }
-
+/*
 resource "kubernetes_pod_disruption_budget" "nginx" {
   count = var.controller_replicas > 1 ? 1 : 0
   metadata {
@@ -398,3 +429,4 @@ resource "kubernetes_pod_disruption_budget" "nginx" {
     }
   }
 }
+*/
