@@ -99,7 +99,12 @@ resource "kubernetes_cluster_role" "nginx" {
     resources  = ["events"]
     verbs      = ["create", "patch"]
   }
-
+  rule {
+    api_groups = ["coordination.k8s.io"]
+    resources  = ["leases"]
+    verbs      = ["create", "update", "get", "list", "watch"]
+  }
+  
   rule {
     api_groups = ["extensions", "networking.k8s.io"]
     resources  = ["ingresses"]
@@ -382,7 +387,7 @@ resource "kubernetes_limit_range" "nginx" {
     }
   }
 }
-
+/*
 resource "kubernetes_pod_disruption_budget" "nginx" {
   count = var.controller_replicas > 1 ? 1 : 0
   metadata {
