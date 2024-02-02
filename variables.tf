@@ -1,7 +1,7 @@
 variable "name" {
   description = "The name of this nginx ingress controller"
   type        = string
-  default     = "ingress-nginx"
+  default     = "stg-ingress-nginx" # Change this!!!!!
 }
 variable "nginx_ingress_controller_image" {
   description = "The image to use for the NGINX ingress controller. See https://github.com/kubernetes/ingress-nginx/releases for available versions"
@@ -12,7 +12,8 @@ variable "nginx_ingress_controller_image" {
 variable "nginx_ingress_controller_image_tag" {
   description = "The image tag to use for the NGINX ingress controller. See https://github.com/kubernetes/ingress-nginx/releases for available versions"
   type        = string
-  default     = "v0.44.0@sha256:3dd0fac48073beaca2d67a78c746c7593f9c575168a17139a9955a82c63c4b9a"
+  #default     = "v0.44.0@sha256:3dd0fac48073beaca2d67a78c746c7593f9c575168a17139a9955a82c63c4b9a"
+  default     = "v1.8.5@sha256:5831fa630e691c0c8c93ead1b57b37a6a8e5416d3d2364afeb8fe36fe0fef680"
 }
 
 variable "nginx_config" {

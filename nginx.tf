@@ -99,6 +99,7 @@ resource "kubernetes_cluster_role" "nginx" {
     resources  = ["events"]
     verbs      = ["create", "patch"]
   }
+  
   rule {
     api_groups = ["coordination.k8s.io"]
     resources  = ["leases"]
