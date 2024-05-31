@@ -1,7 +1,7 @@
 variable "name" {
   description = "The name of this nginx ingress controller"
   type        = string
-  default     = "stg-ingress-nginx"
+  default     = "ingress-nginx"
 }
 variable "nginx_ingress_controller_image" {
   description = "The image to use for the NGINX ingress controller. See https://github.com/kubernetes/ingress-nginx/releases for available versions"
