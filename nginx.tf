@@ -101,29 +101,11 @@ resource "kubernetes_cluster_role" "nginx" {
   }
   
   rule {
-<<<<<<< HEAD
-=======
-    api_groups = ["discovery.k8s.io"]
-    resources  = ["endpointslices"]
-    verbs      = ["list","watch"]
-  }
-
-  rule {
->>>>>>> 6a9f9f158b51c74d71d81ff658cf253b5ca66bfb
     api_groups = ["coordination.k8s.io"]
     resources  = ["leases"]
     verbs      = ["create", "update", "get", "list", "watch"]
   }
   
-<<<<<<< HEAD
-=======
-  rule {
-    api_groups = ["networking.k8s.io"]
-    resources  = ["ingressclasses"]
-    verbs      = ["create", "update", "get", "list", "watch"]
-  }
-
->>>>>>> 6a9f9f158b51c74d71d81ff658cf253b5ca66bfb
   rule {
     api_groups = ["extensions", "networking.k8s.io"]
     resources  = ["ingresses"]
