@@ -13,7 +13,11 @@ variable "nginx_ingress_controller_image_tag" {
   description = "The image tag to use for the NGINX ingress controller. See https://github.com/kubernetes/ingress-nginx/releases for available versions"
   type        = string
   #default     = "v0.44.0@sha256:3dd0fac48073beaca2d67a78c746c7593f9c575168a17139a9955a82c63c4b9a"
+<<<<<<< HEAD
   default     = "v1.8.5@sha256:5831fa630e691c0c8c93ead1b57b37a6a8e5416d3d2364afeb8fe36fe0fef680"
+=======
+  default     = "v1.7.0@sha256:7612338342a1e7b8090bef78f2a04fffcadd548ccaabe8a47bf7758ff549a5f7"
+>>>>>>> 6a9f9f158b51c74d71d81ff658cf253b5ca66bfb
 }
 
 variable "nginx_config" {

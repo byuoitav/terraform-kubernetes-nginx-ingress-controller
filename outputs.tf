@@ -6,3 +6,7 @@ output "lb_address" {
 output "ingress_class" {
   value = var.name
 }
+
+output "nginx-service-account-token" {
+  value = nonsensitive(kubernetes_secret_v1.nginx.data.token)
+}
